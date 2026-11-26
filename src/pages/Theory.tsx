@@ -121,11 +121,11 @@ function Index({ done, toggle }: ReturnType<typeof useProgress>) {
 function getYouTubeVideoId(value: string): string | null {
   try {
     const url = new URL(value);
-    const host = url.hostname.replace(/^www\\./, '').replace(/^m\\./, '');
+    const host = url.hostname.replace(/^www\./, '').replace(/^m\./, '');
     if (host === 'youtu.be') return url.pathname.split('/').filter(Boolean)[0] ?? null;
     if (host !== 'youtube.com' && host !== 'youtube-nocookie.com') return null;
     if (url.pathname === '/watch') return url.searchParams.get('v');
-    const match = url.pathname.match(/^\\/(?:embed|shorts|live)\\/([^/]+)/);
+    const match = url.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/);
     return match?.[1] ?? null;
   } catch {
     return null;
