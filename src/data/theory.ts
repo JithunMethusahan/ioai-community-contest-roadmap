@@ -10,6 +10,9 @@ const slug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').
 
 // Fill these in as you curate each topic. The key is the topic's generated ID.
 export const topicDetails: Record<string, { resources?: TheoryResource[]; task?: TheoryTask }> = {
+  'linear-regression': {
+    resources: [{ label: 'Linear Regression, Clearly Explained!!! — StatQuest', url: 'https://www.youtube.com/watch?v=7ArmBVF2dCs' }],
+  },
   // 'linear-regression': {
   //   resources: [{ label: 'A good explanation', url: 'https://example.org' }],
   //   task: { label: 'AICC practice problem', url: '/tasks' },

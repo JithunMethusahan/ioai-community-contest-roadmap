@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ComponentType, type CSSProperties } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
-import { ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, ChevronDown, ExternalLink, FileText, ListChecks } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, ChevronDown, ExternalLink, FileText, ListChecks, Youtube } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { mdxComponents } from '@/components/solutions';
@@ -118,8 +118,28 @@ function Index({ done, toggle }: ReturnType<typeof useProgress>) {
   </>;
 }
 
-function LessonTools({ topic, finished, toggle, mobile = false }: { topic: TheoryTopic; finished: boolean; toggle: (topic: TheoryTopic) => void; mobile?: boolean }) {
-  const resourceLinks = topic.resources?.length ? topic.resources.map(resource => <a key={resource.url} href={resource.url} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-purple-300 hover:text-aicc-purple dark:border-white/10 dark:text-gray-200">{resource.label}<ExternalLink className="h-3.5 w-3.5 shrink-0" /></a>) : <p className="text-sm text-gray-500 dark:text-gray-400">Curated links will appear here.</p>;
+function getYouTubeVideoId(value: string): string | null {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.replace(/^www\./, '').replace(/^m\./, '');
+    if (host === 'youtu.be') return url.pathname.split('/').filter(Boolean)[0] ?? null;
+    if (host !== 'youtube.com' && host !== 'youtube-nocookie.com') return null;
+    if (url.pathname === '/watch') return url.searchParams.get('v');
+    const match = url.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/);
+    return match?.[1] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function LessonTools({ topic, finished, toggle, mobile = false, topicIndex }: { topic: TheoryTopic; finished: boolean; toggle: (topic: TheoryTopic) => void; mobile?: boolean; topicIndex: number }) {
+  const resourceLinks = topic.resources?.length ? topic.resources.map(resource => {
+    const videoId = getYouTubeVideoId(resource.url);
+    const href = videoId
+      ? `/theory/video?video=${encodeURIComponent(videoId)}&title=${encodeURIComponent(resource.label)}&source=${encodeURIComponent(resource.url)}&topic=${encodeURIComponent(topic.id)}&position=${topicIndex + 1}`
+      : resource.url;
+    return <a key={resource.url} href={href} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-purple-300 hover:text-aicc-purple dark:border-white/10 dark:text-gray-200">{resource.label}{videoId ? <Youtube className="h-4 w-4 shrink-0 text-red-500" aria-label="Watch YouTube video" /> : <ExternalLink className="h-3.5 w-3.5 shrink-0" />}</a>;
+  }) : <p className="text-sm text-gray-500 dark:text-gray-400">Curated links will appear here.</p>;
   const taskLink = topic.task ? <a href={topic.task.url} className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-aicc-purple dark:border-white/10">{topic.task.label}<ArrowRight className="h-4 w-4" /></a> : <p className="text-sm text-gray-500 dark:text-gray-400">A recommended problem will appear here.</p>;
   const markButton = <button type="button" onClick={() => toggle(topic)} aria-pressed={finished} className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aicc-purple ${finished ? 'border border-purple-300 bg-purple-50 text-aicc-purple hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/20 dark:text-purple-200' : 'bg-aicc-purple text-white shadow-sm hover:bg-purple-700 hover:shadow-md'}`}><Check className="h-4 w-4" />{finished ? 'Completed · Undo' : 'Mark as completed'}</button>;
   if (mobile) return <div className="theory-mobile-tools mt-5 space-y-2 lg:hidden">
@@ -177,7 +197,7 @@ function Lesson({ done, toggle, sectionId, topicId }: ReturnType<typeof useProgr
       <p className="mt-5 text-sm font-medium text-gray-500 dark:text-gray-400">{section.title} <span className="mx-1 text-gray-300" aria-hidden="true">/</span> {category.title}</p>
       <h1 className="mt-2 max-w-4xl text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">{topic.title}</h1>
       <div className="mt-5 flex flex-wrap items-center gap-3"><span className={`rounded-full border px-3 py-1 text-xs font-bold ${modeClass[topic.mode]}`}>{category.supplementary ? 'AICC foundation' : `${topic.mode} in syllabus`}</span><a href={syllabusUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-aicc-purple dark:text-gray-400">Official syllabus <ExternalLink className="h-3.5 w-3.5" /></a></div>
-      <LessonTools topic={topic} finished={finished} toggle={toggle} mobile />
+      <LessonTools topic={topic} finished={finished} toggle={toggle} mobile topicIndex={entryIndex} />
       <nav aria-label="Adjacent topics" className="theory-mobile-nav mt-4 flex gap-2 lg:hidden">{prev && <Link to={topicPath(prev.section.id, prev.topic)} className="inline-flex min-w-0 flex-1 items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 dark:border-white/10 dark:text-gray-200"><ArrowLeft className="h-4 w-4 shrink-0" /><span className="truncate">Previous</span></Link>}{next && <Link to={topicPath(next.section.id, next.topic)} className="inline-flex min-w-0 flex-1 items-center justify-end gap-1 rounded-lg border border-purple-200 bg-purple-50 px-3 py-2 text-sm font-semibold text-aicc-purple dark:border-purple-800 dark:bg-purple-900/20 dark:text-purple-300"><span className="truncate">Next: {next.topic.title}</span><ArrowRight className="h-4 w-4 shrink-0" /></Link>}</nav>
     </div></header>
     <main className="theory-lesson-layout mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[13.5rem_minmax(0,1fr)_15rem] lg:gap-7 lg:items-start">
@@ -192,7 +212,7 @@ function Lesson({ done, toggle, sectionId, topicId }: ReturnType<typeof useProgr
       <article ref={articleRef} className="theory-lesson-article min-w-0">
         {Content ? <div className="prose prose-lg max-w-none text-left dark:prose-invert prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-a:font-semibold dark:prose-a:text-purple-400 prose-a:no-underline hover:prose-a:underline prose-headings:tracking-tight"><div className="syntax-highlighter-wrapper"><MDXProvider components={mdxComponents}><Content components={mdxComponents} /></MDXProvider></div></div> : <div className="max-w-2xl"><div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-aicc-purple dark:bg-purple-900/20"><FileText className="h-5 w-5" /></div><h2 className="text-2xl font-bold text-gray-900 dark:text-white">Lesson in preparation</h2><p className="mt-3 leading-relaxed text-gray-600 dark:text-gray-300">{category.supplementary ? `This AICC mathematics foundation supports the IOAI 2027 syllabus under ${section.title}.` : `This topic appears in the official IOAI 2027 syllabus under ${category.title}. Its classification is ${topic.mode}.`} Detailed theory and examples will be added here. You can still track your progress if you study it elsewhere.</p><Link to="/roadmap" className="mt-5 inline-flex items-center gap-2 font-semibold text-aicc-purple hover:underline">Explore the roadmap <ArrowRight className="h-4 w-4" /></Link></div>}
       </article>
-      <aside className="theory-lesson-aside hidden lg:sticky lg:top-24 lg:block"><LessonTools topic={topic} finished={finished} toggle={toggle} /></aside>
+      <aside className="theory-lesson-aside hidden lg:sticky lg:top-24 lg:block"><LessonTools topic={topic} finished={finished} toggle={toggle} topicIndex={entryIndex} /></aside>
       <nav aria-label="Adjacent topics" className="theory-desktop-nav hidden flex-wrap justify-between gap-3 lg:col-start-2 lg:flex">{prev ? <Link to={topicPath(prev.section.id, prev.topic)} className="inline-flex max-w-full items-center gap-2 text-sm font-semibold text-aicc-purple hover:underline"><ArrowLeft className="h-4 w-4 shrink-0" /> {prev.topic.title}</Link> : <span />}{next && <Link to={topicPath(next.section.id, next.topic)} className="inline-flex max-w-full items-center gap-2 text-right text-sm font-semibold text-aicc-purple hover:underline">{next.topic.title} <ArrowRight className="h-4 w-4 shrink-0" /></Link>}</nav>
     </main>
   </>;
