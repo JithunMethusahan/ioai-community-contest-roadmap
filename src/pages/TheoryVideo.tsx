@@ -2,7 +2,7 @@ import { ArrowLeft, ExternalLink, Youtube } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { allTheoryTopics, syllabusUrl, theorySections, topicCount } from '@/data/theory';
+import { syllabusUrl, theorySections, topicCount } from '@/data/theory';
 
 const topicEntries = theorySections.flatMap(section =>
   section.categories.flatMap(category =>
