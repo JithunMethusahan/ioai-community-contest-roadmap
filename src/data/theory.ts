@@ -13,6 +13,9 @@ export const topicDetails: Record<string, { resources?: TheoryResource[]; task?:
   'linear-regression': {
     resources: [{ label: 'Linear Regression, Clearly Explained!!! — StatQuest', url: 'https://www.youtube.com/watch?v=7ArmBVF2dCs' }],
   },
+  'regularization-dropout-early-stopping-weight-decay': {
+    task: { label: 'Find Brain Tumors — Round 0', url: 'https://www.kaggle.com/competitions/aicc-round-0-brain-tumor' },
+  },
   // 'linear-regression': {
   //   resources: [{ label: 'A good explanation', url: 'https://example.org' }],
   //   task: { label: 'AICC practice problem', url: '/tasks' },
