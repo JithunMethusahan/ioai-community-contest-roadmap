@@ -1,0 +1,74 @@
+---
+title: "Regularization: Dropout, Early Stopping, Weight Decay"
+---
+
+> **Estimated time:** 8 min
+
+## Core idea
+
+- **Dropout** randomly zeros activations during training. It is disabled during inference when you call `model.eval()`.
+- **AdamW** decouples weight decay from Adam's adaptive gradient update.
+- **Early stopping** monitors validation performance and restores the best checkpoint, not the final epoch.
+- Regularization should improve held-out performance. Too much regularization causes underfitting.
+
+## Copy-paste contest starter code
+
+```python
+import copy
+import torch
+from torch import nn
+
+model = nn.Sequential(
+    nn.Linear(20, 64),
+    nn.ReLU(),
+    nn.Dropout(0.25),
+    nn.Linear(64, 2),
+)
+
+opt = torch.optim.AdamW(
+    model.parameters(),
+    lr=1e-3,
+    weight_decay=1e-2,
+)
+
+x, y = torch.randn(128, 20), torch.randint(0, 2, (128,))
+xv, yv = torch.randn(32, 20), torch.randint(0, 2, (32,))
+
+best, best_loss, stale, patience = None, float("inf"), 0, 3
+
+for epoch in range(30):
+    model.train()
+    opt.zero_grad(set_to_none=True)
+
+    loss = nn.functional.cross_entropy(model(x), y)
+    loss.backward()
+    opt.step()
+
+    model.eval()
+    with torch.no_grad():
+        val_loss = nn.functional.cross_entropy(model(xv), yv).item()
+
+    if val_loss < best_loss:
+        best_loss, stale = val_loss, 0
+        best = copy.deepcopy(model.state_dict())
+    else:
+        stale += 1
+
+    if stale >= patience:
+        break
+
+if best is not None:
+    model.load_state_dict(best)
+```
+
+## Go-to resources
+
+- [PyTorch: Saving and Loading Models](https://pytorch.org/tutorials/beginner/saving_loading_models.html)
+- [PyTorch: Dropout](https://pytorch.org/docs/stable/generated/torch.nn.Dropout.html)
+
+## ✨ Practice on AICC
+
+- [Find Brain Tumors — Round 0](https://www.kaggle.com/competitions/aicc-round-0-brain-tumor)
+- [Repository editorial](https://github.com/JithunMethusahan/ioai-community-contest-roadmap/tree/main/src/solutions/round-0/find-brain-tumors)
+
+The Round 0 editorial discusses dropout and stochastic depth in Noisy Student, alongside weak/strong augmentation and FixMatch consistency training.
