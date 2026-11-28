@@ -2,12 +2,34 @@
 
 <p className="cheatsheet-time">Estimated time · 8 min</p>
 
-## Core idea
+## Why We Need It
 
-- **Dropout** randomly zeros activations during training. It is disabled during inference when you call `model.eval()`.
-- **AdamW** decouples weight decay from Adam's adaptive gradient update.
-- **Early stopping** monitors validation performance and restores the best checkpoint, not the final epoch.
-- Regularization should improve held-out performance. Too much regularization causes underfitting.
+Neural networks have thousands or millions of weights. If you train for too long, they can start **memorizing noise** in the training data. Training loss keeps dropping while validation loss starts rising — this is **overfitting**. Regularization limits memorization so the model generalizes to unseen test data.
+
+## 1. Weight Decay (L2 Penalty)
+
+- **How it works:** Gently shrinks large weights toward zero on every step by penalizing large weights with \(\lambda_2 \lVert w \rVert_2^2\). Smaller weights generally mean a smoother model that is less likely to memorize.
+- **Adam vs. AdamW:** Standard Adam mixes L2 regularization into its adaptive gradient update. **AdamW** decouples weight decay from that update — a strong default choice.
+- **Contest defaults:** Start with `weight_decay=1e-2` (or `1e-4` for simple CNNs). Usually **don't** apply weight decay to bias terms or normalization-layer parameters.
+
+## 2. Dropout
+
+- **How it works:** Randomly turns off (zeros) a fraction \(p\) of neurons on each training step and scales the remaining activations by \(\frac{1}{1-p}\) during training. This encourages the network not to rely too heavily on any one neuron.
+- **Train vs. test:** Active during `model.train()`. **Automatically turns off** during `model.eval()`.
+- **Contest defaults:** Try `p=0.1–0.3` for Transformers/MLPs and `0.3–0.5` on large classification heads. It is less commonly used inside modern ResNets, which often rely on BatchNorm and other regularization choices.
+
+## 3. Early Stopping
+
+- **How it works:** Checks validation loss or score after each epoch. Whenever validation performance improves, it **saves a copy of the best weights**. If validation fails to improve for `patience` epochs in a row, training stops and **restores the best saved weights**, not the weights from the last epoch.
+- **Contest defaults:** Use `patience=3–5` for fast or large datasets, and `7–10` when validation loss is noisy.
+
+## Quick Summary Table (Which One Do I Use?)
+
+| **Method** | **Main idea** | **Default setting** | **When to use** |
+| --- | --- | --- | --- |
+| **Weight Decay (AdamW)** | Keeps weights small | `1e-2` | **A good default baseline** |
+| **Early Stopping** | Stops before overfitting | `patience=5` + save best | **When training for multiple epochs** |
+| **Dropout** | Randomly hides neurons | `0.1–0.3` | When there is a noticeable train/validation gap |
 
 ## Copy-paste contest starter code
 
