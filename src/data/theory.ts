@@ -1,7 +1,7 @@
 // Matches the IOAI 2027 syllabus hierarchy. Add lessons in src/theory/<id>.mdx.
 export type SyllabusMode = 'Theory' | 'Practice' | 'Both';
 export type TheoryResource = { label: string; url: string };
-export type TheoryTask = { label: string; url: string };
+export type TheoryTask = { label: string; url: string } | { label: string; links: TheoryResource[] };
 export type TheoryTopic = { id: string; title: string; mode: SyllabusMode; resources?: TheoryResource[]; task?: TheoryTask };
 export type TheoryCategory = { title: string; topics: TheoryTopic[]; supplementary?: boolean };
 export type TheorySection = { id: string; title: string; accent: string; categories: TheoryCategory[] };
@@ -14,7 +14,17 @@ export const topicDetails: Record<string, { resources?: TheoryResource[]; task?:
     resources: [{ label: 'Linear Regression, Clearly Explained!!! — StatQuest', url: 'https://www.youtube.com/watch?v=7ArmBVF2dCs' }],
   },
   'regularization-dropout-early-stopping-weight-decay': {
-    task: { label: 'Find Brain Tumors — Round 0', url: 'https://www.kaggle.com/competitions/aicc-round-0-brain-tumor' },
+    resources: [
+      { label: 'PyTorch: Saving and Loading Models', url: 'https://pytorch.org/tutorials/beginner/saving_loading_models.html' },
+      { label: 'PyTorch: Dropout', url: 'https://pytorch.org/docs/stable/generated/torch.nn.Dropout.html' },
+    ],
+    task: {
+      label: 'AICC match',
+      links: [
+        { label: 'Find Brain Tumors — Round 0', url: 'https://www.kaggle.com/competitions/aicc-round-0-brain-tumor' },
+        { label: 'Repository editorial', url: '/solutions/round-0/find-brain-tumors' },
+      ],
+    },
   },
   // 'linear-regression': {
   //   resources: [{ label: 'A good explanation', url: 'https://example.org' }],
