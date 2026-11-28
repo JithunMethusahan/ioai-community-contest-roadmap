@@ -171,3 +171,69 @@ html:has(.theory-page) { scroll-behavior: smooth; }
   .theory-lesson-tools a { transition: none; }
   .theory-lesson-tools a:hover { transform: none; }
 }
+
+
+/* Compact, self-contained cheat sheet card */
+.theory-lesson-article .regularization-cheatsheet {
+  box-sizing: border-box;
+  padding: 1.25rem;
+  border: 1px solid #e8e4eb;
+  border-radius: .9rem;
+  background: #fff;
+  color: #3f3a46;
+  font-size: .95rem;
+  line-height: 1.65;
+  box-shadow: 0 4px 15px #20112908;
+}
+.theory-lesson-article .regularization-cheatsheet > :first-child { margin-top: 0; }
+.theory-lesson-article .regularization-cheatsheet > :last-child { margin-bottom: 0; }
+.theory-lesson-article .regularization-cheatsheet h2 {
+  margin-top: 1.35rem;
+  margin-bottom: .55rem;
+  font-size: 1.08rem;
+  line-height: 1.4;
+  letter-spacing: -.01em;
+}
+.theory-lesson-article .regularization-cheatsheet p,
+.theory-lesson-article .regularization-cheatsheet li {
+  font-size: .95rem;
+  line-height: 1.65;
+}
+.theory-lesson-article .regularization-cheatsheet ul {
+  margin-top: .4rem;
+  margin-bottom: .8rem;
+  padding-left: 1.25rem;
+}
+.theory-lesson-article .regularization-cheatsheet li { margin-top: .25rem; }
+.theory-lesson-article .regularization-cheatsheet .cheatsheet-time {
+  display: inline-flex;
+  margin-bottom: .8rem;
+  border-radius: 999px;
+  background: #f5f0fa;
+  padding: .25rem .65rem;
+  color: #754597;
+  font-size: .78rem;
+  font-weight: 650;
+}
+.theory-lesson-article .regularization-cheatsheet pre[class*="language-"] {
+  margin: .65rem 0 1rem;
+  padding: .9rem;
+}
+.theory-lesson-article .regularization-cheatsheet code[class*="language-"] {
+  font-size: .78rem;
+  line-height: 1.55;
+}
+.dark .theory-lesson-article .regularization-cheatsheet {
+  border-color: #ffffff1a;
+  background: #ffffff08;
+  color: #d7d1db;
+  box-shadow: none;
+}
+.dark .theory-lesson-article .regularization-cheatsheet .cheatsheet-time {
+  background: #8c00ff20;
+  color: #dcbcff;
+}
+@media (max-width: 639px) {
+  .theory-lesson-article .regularization-cheatsheet { padding: 1rem; }
+  .theory-lesson-article .regularization-cheatsheet code[class*="language-"] { font-size: .72rem; }
+}
