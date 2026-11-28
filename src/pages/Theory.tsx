@@ -140,7 +140,14 @@ function LessonTools({ topic, finished, toggle, mobile = false, topicIndex }: { 
       : resource.url;
     return <a key={resource.url} href={href} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-purple-300 hover:text-aicc-purple dark:border-white/10 dark:text-gray-200">{resource.label}{videoId ? <Youtube className="h-4 w-4 shrink-0 text-red-500" aria-label="Watch YouTube video" /> : <ExternalLink className="h-3.5 w-3.5 shrink-0" />}</a>;
   }) : <p className="text-sm text-gray-500 dark:text-gray-400">Curated links will appear here.</p>;
-  const taskLink = topic.task ? <a href={topic.task.url} className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-aicc-purple dark:border-white/10">{topic.task.label}<ArrowRight className="h-4 w-4" /></a> : <p className="text-sm text-gray-500 dark:text-gray-400">A recommended problem will appear here.</p>;
+  const taskLink = topic.task ? (
+    <div className="space-y-2">
+      <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{topic.task.label}</p>
+      {'links' in topic.task
+        ? topic.task.links.map(link => <a key={link.url} href={link.url} className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-aicc-purple dark:border-white/10">{link.label}<ArrowRight className="h-4 w-4 shrink-0" /></a>)
+        : <a href={topic.task.url} className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-aicc-purple dark:border-white/10">{topic.task.label}<ArrowRight className="h-4 w-4" /></a>}
+    </div>
+  ) : <p className="text-sm text-gray-500 dark:text-gray-400">A recommended problem will appear here.</p>;
   const markButton = <button type="button" onClick={() => toggle(topic)} aria-pressed={finished} className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aicc-purple ${finished ? 'border border-purple-300 bg-purple-50 text-aicc-purple hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/20 dark:text-purple-200' : 'bg-aicc-purple text-white shadow-sm hover:bg-purple-700 hover:shadow-md'}`}><Check className="h-4 w-4" />{finished ? 'Completed · Undo' : 'Mark as completed'}</button>;
   if (mobile) return <div className="theory-mobile-tools mt-5 space-y-2 lg:hidden">
     {markButton}
