@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Edit these two values before running.
+OWNER="YOUR_GITHUB_OWNER"
+PROJECT_NUMBER="YOUR_PROJECT_NUMBER"
+
+if [[ "$OWNER" == "YOUR_GITHUB_OWNER" || "$PROJECT_NUMBER" == "YOUR_PROJECT_NUMBER" ]]; then
+  echo "Set OWNER and PROJECT_NUMBER at the top of this script first." >&2
+  exit 1
+fi
+command -v gh >/dev/null 2>&1 || { echo "GitHub CLI (gh) is required." >&2; exit 1; }
+gh auth status >/dev/null
+
+topics=(
+  "1.01 Python Basics (Loops, Functions, etc.)"
+  "1.02 NumPy and Pandas for Data Handling"
+  "1.03 Matplotlib and Seaborn for Visualization"
+  "1.04 Scikit-learn for ML"
+  "1.05 PyTorch Basics"
+  "1.06 Tensor (Multi-dimensional Array) Manipulation"
+  "1.07 Training Models on CPU and GPU"
+  "1.08 Linear Regression"
+  "1.09 Logistic Regression"
+  "1.10 L1 & L2 Regularization"
+  "1.11 K-Nearest Neighbors (K-NN)"
+  "1.12 Decision Trees"
+  "1.13 Model Ensembles (Gradient Boosting, Bagging, Random Forest)"
+  "1.14 Support Vector Machines (SVM)"
+  "1.15 K-Means Clustering"
+  "1.16 Principal Component Analysis (PCA)"
+  "1.17 t-SNE, UMAP"
+  "1.18 DBSCAN, Hierarchical & Spectral Clustering"
+  "1.19 Model Evaluation Metrics (Accuracy, Precision, Recall, F1-Score, etc.)"
+  "1.20 Underfitting, Overfitting"
+  "1.21 Hyperparameter Tuning"
+  "1.22 Cross-Validation"
+  "1.23 Confusion Matrix and ROC Curves"
+  "1.24 Feature Engineering"
+  "1.25 Data Processing"
+  "1.26 Basic Linux terminal commands"
+  "1.27 Jupyter Notebook / JupyterLab"
+  "1.28 Basic Git"
+  "2.01 Perceptron Basics"
+  "2.02 Gradient Descent"
+  "2.03 Backpropagation"
+  "2.04 Activation Functions (ReLU, Sigmoid, Tanh)"
+  "2.05 Loss Functions (MSE, MAE, Cross Entropy, etc.)"
+  "2.06 Multi-Layer Perceptrons (MLP)"
+  "2.07 Data Embeddings (text, image, audio)"
+  "2.08 Pooling Techniques (Max, Average)"
+  "2.09 Attention Mechanism"
+  "2.10 Transformers (theory needed only for text and image)"
+  "2.11 Autoencoders"
+  "2.12 SGD, Mini-Batch Gradient Descent"
+  "2.13 Momentum Methods (Adam, AdamW)"
+  "2.14 Convergence and Learning Rates"
+  "2.15 Regularization: Dropout, Early Stopping, Weight Decay"
+  "2.16 Weight Initialization"
+  "2.17 Batch Normalization"
+  "2.18 Full and Parameter-efficient Finetuning Methods"
+  "3.01 Convolutional Layers"
+  "3.02 Image Classification"
+  "3.03 Object Detection (YOLO, SSD, DETR)"
+  "3.04 Image Segmentation (U-Net)"
+  "3.05 Pre-trained Vision Encoders (e.g. ResNet)"
+  "3.06 Image Augmentation Techniques"
+  "3.07 Generating Images with GANs"
+  "3.08 Self-Supervised Learning for Vision"
+  "3.09 Vision-text encoders (e.g. CLIP)"
+  "3.10 Diffusion Models"
+  "4.01 Text Classification"
+  "4.02 Sequence-to-Sequence tasks"
+  "4.03 Pre-trained Text Encoders"
+  "4.04 Language Modeling"
+  "4.05 Text Decoders (conditional generation)"
+  "4.06 Pre-trained Language Models: Open-source and Closed-source (API-based)"
+  "4.07 Pre-trained Audio Encoders: HuBERT"
+  "4.08 Audio Models: Qwen-Audio, Whisper, Voxtral"
+  "5.01 Agent–Environment Loop (States, Actions, Rewards, Episodes)"
+  "5.02 Policies, Returns and the Discount Factor"
+  "5.03 State-Value and Action-Value Functions (V, Q)"
+  "5.04 Q-learning, DQN, REINFORCE"
+)
+
+for topic in "${topics[@]}"; do
+  echo "Adding: $topic"
+  gh project item-create "$PROJECT_NUMBER" --owner "$OWNER" --title "$topic"
+done
+echo "Added ${#topics[@]} syllabus topics to project $PROJECT_NUMBER."
