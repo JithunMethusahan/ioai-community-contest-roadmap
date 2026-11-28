@@ -14,7 +14,7 @@ Neural networks have thousands or millions of weights. If you train for too long
 
 ## 2. Dropout
 
-- **How it works:** Randomly turns off (zeros) a fraction \(p\) of neurons on each training step and scales the remaining activations by \(\frac{1}{1-p}\) during training. This encourages the network not to rely too heavily on any one neuron.
+- **How it works:** Randomly turns off (zeros) a fraction \(p\) of neurons on each training step and scales the remaining activations by \(1/(1-p)\) during training. This encourages the network not to rely too heavily on any one neuron.
 - **Train vs. test:** Active during `model.train()`. **Automatically turns off** during `model.eval()`.
 - **Contest defaults:** Try `p=0.1–0.3` for Transformers/MLPs and `0.3–0.5` on large classification heads. It is less commonly used inside modern ResNets, which often rely on BatchNorm and other regularization choices.
 
